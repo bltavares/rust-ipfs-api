@@ -20,8 +20,6 @@ use http::{
 };
 use http_body_util::{combinators::BoxBody, BodyExt};
 use hyper::body;
-#[cfg(not(feature = "with-hyper-rustls"))]
-#[cfg(not(feature = "with-hyper-tls"))]
 use hyper_util::client::legacy::connect::HttpConnector;
 use hyper_util::{
     client::legacy::{self as client, connect::Connect},
@@ -93,8 +91,9 @@ impl_default!(
     hyper_rustls::HttpsConnector<HttpConnector>,
     hyper_rustls::HttpsConnectorBuilder::new()
         .with_native_roots()
+        .expect("Could not start native TLS roots")
         .https_or_http()
-        .enable_http1()
+        .enable_all_versions()
         .build()
 );
 
